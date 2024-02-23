@@ -1,0 +1,1 @@
+This is where captions called from youtube will be stored for editing purposes.
