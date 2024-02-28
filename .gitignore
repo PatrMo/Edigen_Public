@@ -165,3 +165,10 @@ Raw_Video/
 Filler_Video/
 Final_Video/
 Captions/
+"token files/""
+
+# pyenv related files
+
+Lib/
+Scripts/
+pyvenv.cfg
