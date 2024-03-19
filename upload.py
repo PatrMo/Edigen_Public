@@ -15,26 +15,83 @@ def video_categories():
 API_NAME = 'youtube'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/youtube']
-# SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 client_file = 'act1_edigen.json'
 service = create_service(client_file, API_NAME, API_VERSION, SCOPES)
 
 print(video_categories())
 
-"""
-Step 1. Uplaod Video
-"""
-upload_time = (datetime.datetime.now() + datetime.timedelta(days=10)).isoformat() + '.000Z'
+
+
+class upload:
+    # class for uploading videos
+
+    def __init__(self, video_file):
+        self.title = ''
+        self.description = ''
+        self.uploadTime = ''
+        self.tags = []
+
+        self.media_file = MediaFileUpload(video_file)
+        # print(media_file.size() / pow(1024, 2), 'mb')
+        # print(media_file.to_json())
+        # print(media_file.mimetype())
+        pass
+
+    def setTitle(self, given_title):
+        self.title = given_title
+
+    #uploads an inputted number of hours from current time.
+    def setUploadTime(self, added_time):
+        # must be in ISO 8601 time format, example: '2020-07-10 15:00:00.000'
+        self.uploadTime = (datetime.datetime.now() + datetime.timedelta(hours=added_time)).isoformat() + '.000Z'
+    
+    def setDescription(self,desc):
+        self.description = desc
+
+    # string list input type for tags
+    def setTags(self,tag_list):
+        self.tags = tag_list
+
+    def setPrivStatus(self,privStatus):
+        self.priv = privStatus
+
+    def video_upload(self):
+        service.videos().insert(
+            part='snippet,status',
+            body=self.request_body,
+            media_body=self.media_file
+        ).execute()
+
+
+    def request_body(self):
+        self.request_body = {
+            'snippet': {
+                'title': self.title,
+                'description': self.description,
+                'categoryId': 42,
+                'tags': ['tags']
+            },
+            'status': {
+                'privacyStatus': self.priv,
+                'publishedAt': self.time,
+                'selfDeclaredMadeForKids': False
+            },
+            'notifySubscribers': False
+        }
+      
+
+
+'''
 request_body = {
     'snippet': {
         'title': '<video title>',
         'description': '<video description>',
-        'categoryId': '<category id>',
+        'categoryId': 42,
         'tags': ['tags']
     },
     'status': {
         'privacyStatus': 'private',
-        'publishedAt': upload_time,
+        'publishedAt': upload.time(hours=1),
         'selfDeclaredMadeForKids': False
     },
     'notifySubscribers': False
@@ -51,8 +108,9 @@ response_video_upload = service.videos().insert(
     body=request_body,
     media_body=media_file
 ).execute()
-uploaded_video_id = response_video_upload.get('id')
 
+
+'''
 
 
 '''
