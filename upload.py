@@ -2,119 +2,105 @@
 
 
 import datetime
-import time
 from googleapiclient.http import MediaFileUpload
 import pandas as pd
 from google_apis import create_service
 
-def video_categories():
-    video_categories = service.videoCategories().list(part='snippet', regionCode='US').execute()
-    df = pd.DataFrame(video_categories.get('items'))
-    return pd.concat([df['id'], df['snippet'].apply(pd.Series)[['title']]], axis=1)
-
+'''
 API_NAME = 'youtube'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/youtube']
 client_file = 'act1_edigen.json'
 service = create_service(client_file, API_NAME, API_VERSION, SCOPES)
+def video_categories():
+    video_categories = service.videoCategories().list(part='snippet', regionCode='US').execute()
+    df = pd.DataFrame(video_categories.get('items'))
+    return pd.concat([df['id'], df['snippet'].apply(pd.Series)[['title']]], axis=1)
 
 print(video_categories())
 
 
-
+'''
 class upload:
-    # class for uploading videos
+    # class for uploading shorts ---> change id in request_body for different format
 
-    def __init__(self, video_file):
+    def __init__(self):
+        API_NAME = 'youtube'
+        API_VERSION = 'v3'
+        SCOPES = ['https://www.googleapis.com/auth/youtube']
+        client_file = 'act1_edigen.json'
+
+        self.service = create_service(client_file, API_NAME, API_VERSION, SCOPES)
+
         self.title = ''
         self.description = ''
         self.uploadTime = ''
         self.tags = []
+        self.priv_status = ''
+        self.media_file = ''
 
+    def setVideoFile(self,video_file):
         self.media_file = MediaFileUpload(video_file)
         # print(media_file.size() / pow(1024, 2), 'mb')
         # print(media_file.to_json())
         # print(media_file.mimetype())
-        pass
+        self.setRequestBody()
 
     def setTitle(self, given_title):
         self.title = given_title
+        self.setRequestBody()
 
     #uploads an inputted number of hours from current time.
     def setUploadTime(self, added_time):
         # must be in ISO 8601 time format, example: '2020-07-10 15:00:00.000'
         self.uploadTime = (datetime.datetime.now() + datetime.timedelta(hours=added_time)).isoformat() + '.000Z'
+        self.setRequestBody()
     
     def setDescription(self,desc):
         self.description = desc
+        self.setRequestBody()
 
     # string list input type for tags
     def setTags(self,tag_list):
         self.tags = tag_list
+        self.setRequestBody()
 
-    def setPrivStatus(self,privStatus):
-        self.priv = privStatus
+    def setPrivStatus(self,priv):
+        self.priv_status = priv
+        self.setRequestBody()
 
-    def video_upload(self):
-        service.videos().insert(
-            part='snippet,status',
-            body=self.request_body,
-            media_body=self.media_file
-        ).execute()
-
-
-    def request_body(self):
+    def setRequestBody(self):
+        #all of the video info is set here
         self.request_body = {
             'snippet': {
                 'title': self.title,
                 'description': self.description,
-                'categoryId': 42,
-                'tags': ['tags']
+                'categoryId': 29,
+                'tags': self.tags
             },
             'status': {
-                'privacyStatus': self.priv,
-                'publishedAt': self.time,
+                'privacyStatus': self.priv_status,
+                'publishedAt': self.uploadTime,
                 'selfDeclaredMadeForKids': False
             },
             'notifySubscribers': False
         }
-      
+
+    def uploadVideo(self):
+        self.service.videos().insert(
+            part='snippet,status',
+            body=self.request_body,
+            media_body=self.media_file
+        ).execute()
+        print('Video Uploaded with ', self.request_body)
 
 
-'''
-request_body = {
-    'snippet': {
-        'title': '<video title>',
-        'description': '<video description>',
-        'categoryId': 42,
-        'tags': ['tags']
-    },
-    'status': {
-        'privacyStatus': 'private',
-        'publishedAt': upload.time(hours=1),
-        'selfDeclaredMadeForKids': False
-    },
-    'notifySubscribers': False
-}
-
-video_file = 'demo video.mp4'
-media_file = MediaFileUpload(video_file)
-# print(media_file.size() / pow(1024, 2), 'mb')
-# print(media_file.to_json())
-# print(media_file.mimetype())
-
-response_video_upload = service.videos().insert(
-    part='snippet,status',
-    body=request_body,
-    media_body=media_file
-).execute()
-
-
-'''
-
-
-'''
-class Upload:
-    def __innit__(self):
-        pass
-'''
+def upload_main():
+    vid = upload()
+    vid.setVideoFile('test.mp4')
+    vid.setTitle('Title')
+    vid.setDescription('Test Description') #long string
+    vid.setTags(['shorts', 'informational', 'subwaysurfers']) #insert a list of string representing tags ---> may use same list for all vidoes in future
+    vid.setPrivStatus('private') #changfe to public when youtube account gets authorized
+    vid.setUploadTime(1) 
+    vid.uploadVideo()

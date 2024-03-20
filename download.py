@@ -12,7 +12,7 @@ class Download:
         self.yt = YouTube(f'https://www.youtube.com/watch?v={url}')
 
     def download(self):
-        '''Downlaods highest quality video available'''
+        '''Downloads highest quality video available'''
         self.yt.streams.filter(progressive=True, file_extension='mp4').get_highest_resolution().download()
 
     def len_video(self):
@@ -29,5 +29,7 @@ class Download:
 if __name__ == '__main__':
     # donwload Video
     video = Download('LrIRuqr_Ozg')
+    video.download()
+
     with open('output.json', "w") as json_file:
         json.dump(video.cap(), json_file, indent=1)
