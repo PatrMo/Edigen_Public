@@ -165,10 +165,13 @@ Raw_Video/
 Filler_Video/
 Final_Video/
 Captions/
-"token files/""
+"token files/"
 
 # pyenv related files
 
 Lib/
 Scripts/
 pyvenv.cfg
+
+# api key
+act1_edigen.json
