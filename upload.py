@@ -6,21 +6,7 @@ from googleapiclient.http import MediaFileUpload
 import pandas as pd
 from google_apis import create_service
 
-'''
-API_NAME = 'youtube'
-API_VERSION = 'v3'
-SCOPES = ['https://www.googleapis.com/auth/youtube']
-client_file = 'act1_edigen.json'
-service = create_service(client_file, API_NAME, API_VERSION, SCOPES)
-def video_categories():
-    video_categories = service.videoCategories().list(part='snippet', regionCode='US').execute()
-    df = pd.DataFrame(video_categories.get('items'))
-    return pd.concat([df['id'], df['snippet'].apply(pd.Series)[['title']]], axis=1)
 
-print(video_categories())
-
-
-'''
 class upload:
     # class for uploading shorts ---> change id in request_body for different format
 
